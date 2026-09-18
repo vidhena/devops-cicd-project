@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DevOps CI/CD Project</title>
+</head>
+<body>
+    <h1>Welcome to My DevOps Project</h1>
+    <p>Application deployed using Jenkins, Docker and Kubernetes.</p>
+</body>
+</html>
