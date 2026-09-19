@@ -1,43 +1,45 @@
-DevOps CI/CD Pipeline with Jenkins, Docker, Kubernetes and Terraform
-Project Overview
-This project demonstrates a complete local CI/CD pipeline for deploying a simple Nginx web application using DevOps tools.
-The application source code is maintained using Git and GitHub. Jenkins retrieves the latest code, builds a Docker image, loads the image into a Minikube Kubernetes cluster, and uses Terraform to create and manage Kubernetes resources.
-The project demonstrates the complete flow from source-code change to application deployment and verification.
-Technologies Used
-Git – Version control
-GitHub – Source-code repository
-Jenkins – CI/CD automation
-Docker – Containerization
-Kubernetes – Container orchestration
-Minikube – Local Kubernetes cluster
-Terraform – Infrastructure as Code
-Nginx – Web server
-Windows – Local development environment
-Project Architecture
-Developer
-    |
-    v
-   Git
-    |
-    v
- GitHub
-    |
-    v
- Jenkins
-    |
-    +----------------------+
-    |                      |
-    v                      v
-Docker Build          Terraform
-    |                      |
-    v                      v
-Minikube              Kubernetes
-    |                      |
-    +----------+-----------+
-               |
-               v
-        Web Application
-Project Structure
+# DevOps CI/CD Project Using Jenkins, Docker, Kubernetes and Terraform
+
+This project demonstrates a beginner-level DevOps CI/CD workflow using Git, GitHub, Jenkins, Docker, Kubernetes, Minikube, and Terraform.
+
+The main objective of this project is to automate the process of taking application source code from GitHub, building the application into a Docker image, deploying it to Kubernetes, and managing the Kubernetes resources using Terraform.
+
+The application used in this project is a simple Nginx-based web application. The application contains an HTML page that displays a welcome message and confirms that the application has been deployed using Jenkins, Docker, and Kubernetes.
+
+## Technologies Used
+
+- Git
+- GitHub
+- Jenkins
+- Docker
+- Kubernetes
+- Minikube
+- Terraform
+- Nginx
+- HTML
+
+## Application
+
+The application is a simple HTML web page served using Nginx.
+
+The application file is:
+
+`app/index.html`
+
+The current application version is Version 1.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DevOps CI/CD Project</title>
+</head>
+<body>
+    <h1>Welcome to My DevOps Project v1</h1>
+    <p>Application deployed using Jenkins, Docker and Kubernetes.</p>
+</body>
+</html>
+project structure
 devops-cicd-project/
 │
 ├── app/
@@ -54,323 +56,148 @@ devops-cicd-project/
     ├── namespace.tf
     ├── deployment.tf
     └── service.tf
-Application
-The application is a simple HTML web page served using Nginx.
-The application source code is located at:
-app/index.html
-Example:
-HTML
-<!DOCTYPE html>
-<html>
-<head>
-    <title>DevOps CI/CD Project</title>
-</head>
-<body>
-    <h1>DevOps CI/CD Project - Version 2</h1>
-</body>
-</html>
+    Git and GitHub
+Git is used for version control and to track changes made to the application and configuration files.
+GitHub is used as the remote repository where the complete project source code is stored.
+GitHub Repository:
+https://github.com/vidhena/devops-cicd-project⁠�
+The project uses the master branch.
+The source code is committed and pushed to GitHub so that Jenkins can retrieve the latest version of the project.
+
 Docker
 Docker is used to containerize the web application.
-Dockerfile
+The Dockerfile uses Nginx Alpine as the base image.
 FROM nginx:alpine
 
 COPY app/index.html /usr/share/nginx/html/index.html
 
 EXPOSE 80
-Dockerfile Explanation
-FROM nginx:alpine uses a lightweight Nginx image.
-COPY copies the application HTML file into the Nginx web directory.
-EXPOSE 80 documents the port used by Nginx.
-Build Docker Image
-The Docker image is built using:
-docker build -t devops-web-app:2.0 .
-The image used in the final deployment is:
-devops-web-app:2.0
-Versioned image tags are used so that application versions can be clearly identified.
-Example:
+The Docker image is created using:
+docker build -t devops-web-app:1.0 .
+The Docker image name used in this project is:
 devops-web-app:1.0
-devops-web-app:2.0
-devops-web-app:3.0
+The application runs on port 80 inside the container.
+
 Kubernetes and Minikube
-Kubernetes is used to run and manage the Docker container.
-Minikube provides the local Kubernetes cluster.
+Kubernetes is used to deploy and manage the Docker container.
+Minikube is used to run the Kubernetes cluster locally.
 The Minikube profile used in this project is:
 unique
-Check the Minikube status using:
-minikube status -p unique
-Kubernetes Namespace
-A dedicated Kubernetes namespace is used:
+The Kubernetes namespace created for the project is:
 devops
-This keeps the project's Kubernetes resources organized.
-Kubernetes Deployment
-Deployment name:
+The application deployment is:
 devops-web-app
-The deployment runs one replica of the application.
-The container image is:
-devops-web-app:2.0
-The container listens on:
-80
-The deployment uses:
-image_pull_policy = "Never"
-This is because the Docker image is loaded directly into the local Minikube cluster.
-Kubernetes Service
-Service name:
+The Kubernetes service is:
 devops-web-app-service
-Service type:
-NodePort
-The service exposes the application and forwards traffic to the Nginx container.
+The application container uses port 80.
+The Kubernetes deployment uses the locally created Docker image:
+devops-web-app:1.0
+The image pull policy is set to Never because the image is built locally and loaded into Minikube.
+The Docker image is loaded into Minikube using:
+minikube image load devops-web-app:1.0 -p unique
+The application can be accessed using:
+minikube service devops-web-app-service -n devops -p unique
+
+Terraform
+Terraform is used as Infrastructure as Code to create and manage the Kubernetes resources.
+Terraform is responsible for managing the Kubernetes namespace, deployment, and service.
+The Terraform configuration is divided into separate files.
+providers.tf configures the Kubernetes Terraform provider.
+namespace.tf creates the devops namespace.
+deployment.tf creates the devops-web-app deployment and configures the application container.
+service.tf creates the NodePort service used to access the application.
+The main Terraform commands used are:
+terraform init
+terraform plan
+terraform apply -auto-approve
+terraform init initializes the Terraform project and downloads the required provider.
+terraform plan displays the changes Terraform is going to make.
+terraform apply creates or updates the Kubernetes resources according to the Terraform configuration.
+
+Jenkins
+Jenkins is used to automate the CI/CD process.
+The Jenkins pipeline is defined inside the Jenkinsfile.
+The Jenkins job retrieves the project from the GitHub repository and performs the deployment steps automatically.
+The pipeline performs the following tasks:
+Checks out the source code from GitHub.
+Builds the Docker image.
+Loads the Docker image into Minikube.
+Initializes Terraform.
+Applies the Terraform configuration.
+Restarts the Kubernetes deployment.
+Waits for the deployment to complete.
+Verifies the Kubernetes pods and services.
+
+The Docker image is built using:
+docker build -t devops-web-app:1.0 .
+The image is loaded into the Minikube unique profile using:
+minikube image load devops-web-app:1.0 -p unique
+Terraform is initialized using:
+cd terraform
+terraform init
+The Kubernetes infrastructure is deployed using:
+cd terraform
+terraform apply -auto-approve
+The Kubernetes deployment is restarted using:
+kubectl rollout restart deployment/devops-web-app -n devops
+The rollout is verified using:
+kubectl rollout status deployment/devops-web-app -n devops
+The pods are checked using:
+kubectl get pods -n devops
+The service is checked using:
+kubectl get services -n devops
+
+CI/CD Process
+When the project source code is available in GitHub, Jenkins retrieves the source code from the repository.
+Jenkins then builds the Docker image using the Dockerfile.
+The generated Docker image is loaded into the local Minikube cluster.
+Terraform is then used to create or update the Kubernetes resources.
+Kubernetes starts the application using the Docker image.
+Jenkins verifies that the deployment and service are running successfully.
+The application can then be accessed through the Kubernetes NodePort service.
+
+Troubleshooting
+During the implementation of the project, several practical issues were encountered and resolved.
+Initially, Jenkins was unable to access the Minikube environment because Jenkins was running under the Windows Local System account. The Jenkins service was configured to run using the Windows user account that had access to the Minikube configuration.
+Another issue occurred because the active Minikube profile was unique instead of the default minikube profile. The Jenkins pipeline was updated to explicitly use the unique profile when loading the Docker image.
+The Docker image was built locally and therefore was not pushed to Docker Hub. The image was loaded directly into Minikube using:
+minikube image load devops-web-app:1.0 -p unique
+A Terraform state issue was also encountered when Kubernetes resources were changed outside Terraform. Terraform detected that the actual Kubernetes environment was different from its state and reconciled the resources during the next Terraform apply.
+These troubleshooting steps helped in understanding how Jenkins, Docker, Kubernetes, Minikube, and Terraform interact during a CI/CD deployment.
+
+Verification
+The Kubernetes pods can be checked using:
+kubectl get pods -n devops
+The Kubernetes service can be checked using:
+kubectl get services -n devops
+The deployment can be checked using:
+kubectl get deployment -n devops
+The Docker image configured in the deployment can be checked using:
+kubectl get deployment devops-web-app -n devops -o jsonpath="{.spec.template.spec.containers[0].image}"
+The application content running inside the pod can be checked using:
+kubectl exec -n devops deployment/devops-web-app -- cat /usr/share/nginx/html/index.html
 The application can be opened using:
 minikube service devops-web-app-service -n devops -p unique
-Terraform
-Terraform is used as Infrastructure as Code (IaC) to manage the Kubernetes resources.
-Terraform creates and manages:
-Namespace
-    |
-    +--- Deployment
-    |
-    +--- Service
-Terraform Files
-providers.tf
-Configures the Kubernetes provider.
-terraform {
-  required_providers {
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.0"
-    }
-  }
-}
 
-provider "kubernetes" {
-  config_path = "~/.kube/config"
-}
-namespace.tf
-Creates the devops namespace.
-resource "kubernetes_namespace" "devops" {
-  metadata {
-    name = "devops"
-  }
-}
-deployment.tf
-Creates the Kubernetes deployment and runs:
-devops-web-app:2.0
-The deployment contains:
-Application container
-One replica
-Port 80
-image_pull_policy = "Never"
-service.tf
-Creates the NodePort service:
-devops-web-app-service
-Terraform Commands
-Initialize Terraform:
-terraform init
-Check the infrastructure plan:
-terraform plan
-Apply the configuration:
-terraform apply -auto-approve
-Jenkins CI/CD Pipeline
-The CI/CD pipeline is defined in:
-Jenkinsfile
-The Jenkins pipeline performs the following stages:
-1. Checkout
-2. Build Docker Image
-3. Load Image into Minikube
-4. Terraform Init
-5. Terraform Apply
-6. Restart Application
-7. Verify Deployment
-Stage 1 – Checkout
-Jenkins retrieves the latest source code from GitHub.
-GitHub
-   ↓
-Jenkins Workspace
-Stage 2 – Build Docker Image
-Jenkins builds the Docker image:
-docker build -t devops-web-app:2.0 .
-Stage 3 – Load Image into Minikube
-The image is loaded into the correct Minikube profile:
-minikube image load devops-web-app:2.0 -p unique
-Stage 4 – Terraform Init
-Jenkins initializes Terraform:
-cd terraform
-terraform init
-Stage 5 – Terraform Apply
-Jenkins creates or updates the Kubernetes resources:
-cd terraform
-terraform apply -auto-approve
-Stage 6 – Restart Application
-Jenkins restarts the Kubernetes deployment:
-kubectl rollout restart deployment/devops-web-app -n devops
-Then it waits for the deployment:
-kubectl rollout status deployment/devops-web-app -n devops
-Stage 7 – Verify Deployment
-Jenkins verifies the Kubernetes resources:
-kubectl get pods -n devops
-kubectl get services -n devops
-A successful pipeline displays:
-CI/CD Pipeline completed successfully!
-Finished: SUCCESS
-Complete CI/CD Workflow
-Developer makes code change
-          |
-          v
-     Git add/commit
-          |
-          v
-      GitHub
-          |
-          v
-      Jenkins
-          |
-          v
-    Checkout Source
-          |
-          v
-   Build Docker Image
-          |
-          v
- Load Image into Minikube
-          |
-          v
-    Terraform Init
-          |
-          v
-   Terraform Apply
-          |
-          v
-     Kubernetes
-          |
-          v
- Restart Deployment
-          |
-          v
- Verify Pod & Service
-          |
-          v
- Updated Web Application
-Testing
-The CI/CD pipeline was tested by modifying the application.
-Initial Application
-The initial Docker image was:
-devops-web-app:1.0
-The application was deployed successfully using this image.
-Application Update
-The HTML application was modified to Version 2.
-A new Docker image was then created:
-devops-web-app:2.0
-The new image was:
-Built using Docker
-Loaded into Minikube
-Deployed using Terraform
-Started by Kubernetes
-Verified inside the Kubernetes pod
-Displayed through the browser
-The Version 2 application was successfully displayed.
-Troubleshooting
-Several real-world issues were encountered during the implementation.
-1. Jenkins could not find the Minikube profile
-Problem
-Jenkins initially tried to use the default profile:
-minikube
-However, the actual active profile was:
-unique
-Solution
-The Minikube command was changed to:
-minikube image load devops-web-app:2.0 -p unique
-2. Jenkins could not access Minikube
-Problem
-Jenkins was initially running as the Windows Local System account.
-The Minikube configuration was available to the normal Windows user account.
-Solution
-Jenkins was configured to run under the Windows user account.
-After restarting the Jenkins service, Jenkins was able to access the Minikube profile.
-3. Application update was not reflected in Kubernetes
-Problem
-The first application update continued using the same Docker image tag:
-devops-web-app:1.0
-The new Docker image was built, but Kubernetes continued using the previously loaded image.
-Solution
-A new image tag was introduced:
-devops-web-app:2.0
-The following were updated:
-Jenkins Docker build
-Minikube image load
-Terraform deployment
-This allowed Kubernetes to clearly identify and deploy the new image.
-4. Kubernetes pod continued running the old application
-Problem
-The old pod was still running the previous image.
-Solution
-The existing pod was deleted:
-kubectl delete pod -l app=devops-web-app -n devops
-Kubernetes automatically created a new pod through the Deployment.
-The new pod was then verified using:
-kubectl exec -n devops deployment/devops-web-app -- cat /usr/share/nginx/html/index.html
-The updated Version 2 content was successfully displayed.
-5. Terraform detected changes outside Terraform
-Terraform displayed:
-Objects have changed outside of Terraform
-This occurred because a Kubernetes resource had been changed outside Terraform.
-Terraform detected the difference and recreated the required resources successfully.
-The Terraform deployment completed successfully:
-Apply complete!
-Resources: 3 added, 0 changed, 0 destroyed.
-Verification Commands
-Check Kubernetes pods:
-kubectl get pods -n devops
-Check Kubernetes services:
-kubectl get services -n devops
-Check deployment image:
-kubectl get deployment devops-web-app -n devops -o jsonpath="{.spec.template.spec.containers[0].image}"
-Expected:
-devops-web-app:2.0
-Check the actual HTML inside the running container:
-kubectl exec -n devops deployment/devops-web-app -- cat /usr/share/nginx/html/index.html
-Open the application:
-minikube service devops-web-app-service -n devops -p unique
+Project Outcome
+The project successfully demonstrates a complete beginner-level local DevOps CI/CD workflow.
+Git and GitHub are used for source code management.
+Jenkins is used for CI/CD automation.
+Docker is used for application containerization.
+Kubernetes is used for container orchestration.
+Minikube provides the local Kubernetes environment.
+Terraform is used for Infrastructure as Code and manages the Kubernetes resources.
+Nginx serves the web application inside the Docker container.
+The final application is successfully deployed to Kubernetes and can be accessed through the Kubernetes service.
+
 Key Learning
-This project provided practical experience with:
-Git version control
-GitHub repository management
-Jenkins CI/CD pipelines
-Docker image creation
-Kubernetes deployments
-Minikube
-Terraform Infrastructure as Code
-Kubernetes services
-Image versioning
-CI/CD troubleshooting
-Jenkins and Windows permissions
-Debugging container deployment issues
+This project provided practical experience in Git version control, GitHub repository management, Jenkins pipelines, Docker image creation, Kubernetes deployments and services, Minikube, Terraform configuration, Infrastructure as Code, CI/CD automation, and troubleshooting.
+The project also helped in understanding how multiple DevOps tools can be integrated into a single deployment workflow instead of using each tool independently.
+
 Future Improvements
-The project can be further improved by:
-Automatically triggering Jenkins after every GitHub push
-Automatically generating Docker image tags using Jenkins build numbers
-Using Git commit IDs as Docker image tags
-Adding automated application testing
-Adding Kubernetes readiness and liveness probes
-Increasing the number of application replicas
-Adding monitoring and logging
-Deploying the application to a cloud Kubernetes environment
-Final Result
-The project successfully implements a complete local CI/CD pipeline:
-Git
- ↓
-GitHub
- ↓
-Jenkins
- ↓
-Docker
- ↓
-Minikube
- ↓
-Terraform
- ↓
-Kubernetes
- ↓
-Nginx Web Application
-A code change can be committed to GitHub, processed through Jenkins, converted into a Docker image, loaded into Minikube, deployed through Terraform and Kubernetes, and verified as an updated running application.
-Author
-Vidhena
-Project: DevOps CI/CD Pipeline with Jenkins, Docker, Kubernetes and Terraform
+The project can be extended in the future by adding automatic Jenkins triggers when code is pushed to GitHub, automated Docker image versioning, automated testing, Kubernetes ConfigMaps and Secrets, multiple application replicas, monitoring, logging, and deployment to a cloud Kubernetes environment.
+
+Conclusion
+This project demonstrates how a simple web application can be managed through a DevOps workflow using Git, GitHub, Jenkins, Docker, Kubernetes, Minikube, and Terraform.
+The application source code is maintained in GitHub, Jenkins automates the CI/CD process, Docker provides containerization, Kubernetes manages the application, Minikube provides the local cluster, and Terraform manages the Kubernetes infrastructure as code.
+The project provides hands-on experience with the fundamental tools and concepts required for a beginner-level DevOps workflow.
