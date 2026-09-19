@@ -21,15 +21,16 @@ pipeline {
             }
         }
 
-        stage('Load Image into Minikube') {
-            steps {
-                echo 'Loading Docker image into Minikube...'
+       stage('Load Image into Minikube') {
+    steps {
+        echo 'Loading latest Docker image into Minikube...'
 
-                bat '''
-                minikube image load devops-web-app:1.0 -p unique
-                '''
-            }
-        }
+        bat '''
+        minikube image rm devops-web-app:1.0 -p unique || exit /b 0
+        minikube image load devops-web-app:1.0 -p unique
+        '''
+    }
+}
 
         stage('Terraform Init') {
             steps {
