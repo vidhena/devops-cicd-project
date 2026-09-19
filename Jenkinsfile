@@ -26,7 +26,7 @@ pipeline {
                 echo 'Loading Docker image into Minikube...'
 
                 bat '''
-                minikube image load devops-web-app:1.0
+                minikube image load devops-web-app:1.0 -p unique
                 '''
             }
         }
