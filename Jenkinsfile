@@ -16,7 +16,7 @@ pipeline {
                 echo 'Building Docker image...'
 
                 bat '''
-                docker build -t devops-web-app:1.0 .
+                docker build -t devops-web-app:2.0 .
                 '''
             }
         }
@@ -26,8 +26,7 @@ pipeline {
         echo 'Loading latest Docker image into Minikube...'
 
         bat '''
-        minikube image rm devops-web-app:1.0 -p unique || exit /b 0
-        minikube image load devops-web-app:1.0 -p unique
+        minikube image load devops-web-app:2.0 -p unique
         '''
     }
 }

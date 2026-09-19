@@ -23,7 +23,7 @@ resource "kubernetes_deployment" "web_app" {
       spec {
         container {
           name  = "web-app"
-          image = "devops-web-app:1.0"
+          image = "devops-web-app:2.0"
 
           image_pull_policy = "Never"
 
